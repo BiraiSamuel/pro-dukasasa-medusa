@@ -1,0 +1,13 @@
+# Ignore Next.js build output
+.next/
+out/
+
+# Ignore Yarn unplugged packages
+.yarn/unplugged/
+
+# Ignore node_modules just in case
+node_modules/
+
+# Optional: ignore log files and envs
+*.log
+.env
