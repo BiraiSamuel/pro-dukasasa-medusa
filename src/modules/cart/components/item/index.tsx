@@ -16,14 +16,12 @@ import { useState } from "react"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
-  type?: "full" | "preview"
   currencyCode: string
 }
 
-const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
+const Item = ({ item, currencyCode }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  console.log(item.child.product.base_image.small_image_url);
 
   const changeQuantity = async (quantity: number) => {
     setError(null)
@@ -41,7 +39,6 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
       })
   }
 
-  // TODO: Update this to grab the actual max inventory
   const maxQtyFromInventory = 10
   const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
 
@@ -49,15 +46,12 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
     <Table.Row className="w-full" data-testid="product-row">
       <Table.Cell className="!pl-0 p-4 w-24">
         <LocalizedClientLink
-          href={`/products/${item.product_handle}`}
-          className={clx("flex", {
-            "w-16": type === "preview",
-            "small:w-24 w-12": type === "full",
-          })}
+          href={`/products/${item.product.url_key}`}
+          className="flex w-24"
         >
           <Thumbnail
-            thumbnail={item.child.product.base_image.small_image_url}
-            images={item.child.product.base_image.small_image_url}
+            thumbnail={item.product.base_image.small_image_url}
+            images={item.product.images}
             size="square"
           />
         </LocalizedClientLink>
@@ -73,64 +67,47 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
         <LineItemOptions variant={item.child} data-testid="product-variant" />
       </Table.Cell>
 
-      {type === "full" && (
-        <Table.Cell>
-          <div className="flex gap-2 items-center w-28">
-            <DeleteButton id={item.id} data-testid="product-delete-button" />
-            <CartItemSelect
-              value={item.quantity}
-              onChange={(value) => changeQuantity(parseInt(value.target.value))}
-              className="w-14 h-10 p-4"
-              data-testid="product-select-button"
-            >
-              {/* TODO: Update this with the v2 way of managing inventory */}
-              {Array.from(
-                {
-                  length: Math.min(maxQuantity, 10),
-                },
-                (_, i) => (
-                  <option value={i + 1} key={i}>
-                    {i + 1}
-                  </option>
-                )
-              )}
+      <Table.Cell>
+        <div className="flex gap-2 items-center w-28">
+          <DeleteButton id={item.id} data-testid="product-delete-button" />
+          <CartItemSelect
+            value={item.quantity}
+            onChange={(value) => changeQuantity(parseInt(value.target.value))}
+            className="w-14 h-10 p-4"
+            data-testid="product-select-button"
+          >
+            {Array.from(
+              { length: Math.min(maxQuantity, 10) },
+              (_, i) => (
+                <option value={i + 1} key={i}>
+                  {i + 1}
+                </option>
+              )
+            )}
+          </CartItemSelect>
+          {updating && <Spinner />}
+        </div>
+        <ErrorMessage error={error} data-testid="product-error-message" />
+      </Table.Cell>
 
-              <option value={1} key={1}>
-                1
-              </option>
-            </CartItemSelect>
-            {updating && <Spinner />}
-          </div>
-          <ErrorMessage error={error} data-testid="product-error-message" />
-        </Table.Cell>
-      )}
-
-      {type === "full" && (
-        <Table.Cell className="hidden small:table-cell">
-          <LineItemUnitPrice
-            item={item}
-            style="tight"
-            currencyCode={currencyCode}
-          />
-        </Table.Cell>
-      )}
+      <Table.Cell className="hidden small:table-cell">
+        <LineItemUnitPrice
+          item={item}
+          style="tight"
+          currencyCode={currencyCode}
+        />
+      </Table.Cell>
 
       <Table.Cell className="!pr-0">
-        <span
-          className={clx("!pr-0", {
-            "flex flex-col items-end h-full justify-center": type === "preview",
-          })}
-        >
-          {type === "preview" && (
-            <span className="flex gap-x-1 ">
-              <Text className="text-ui-fg-muted">{item.quantity}x </Text>
-              <LineItemUnitPrice
-                item={item}
-                style="tight"
-                currencyCode={currencyCode}
-              />
-            </span>
-          )}
+        <span className="flex flex-col items-end h-full justify-center">
+          <span className="flex gap-x-1">
+            <Text className="text-ui-fg-muted">{item.quantity}x </Text>
+            <LineItemUnitPrice
+              item={item}
+              style="tight"
+              currencyCode={currencyCode}
+            />
+          </span>
           <LineItemPrice
             item={item}
             style="tight"

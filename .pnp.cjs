@@ -80,7 +80,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tailwindcss", "npm:3.4.17"],\
             ["tailwindcss-radix", "npm:2.9.0"],\
             ["typescript", "patch:typescript@npm%3A5.8.3#~builtin<compat/typescript>::version=5.8.3&hash=a1c5e5"],\
-            ["webpack", "virtual:71f11338c4bb9ff82c386b758202cddf9d30d39739ee12ae56f8f0128e865eaad3fbc0e98d996d2aa4cc080dcbd5d1201a181be8dc7646aa406ec878dfe52c25#npm:5.100.2"]\
+            ["webpack", "virtual:71f11338c4bb9ff82c386b758202cddf9d30d39739ee12ae56f8f0128e865eaad3fbc0e98d996d2aa4cc080dcbd5d1201a181be8dc7646aa406ec878dfe52c25#npm:5.100.2"],\
+            ["zustand", "virtual:71f11338c4bb9ff82c386b758202cddf9d30d39739ee12ae56f8f0128e865eaad3fbc0e98d996d2aa4cc080dcbd5d1201a181be8dc7646aa406ec878dfe52c25#npm:5.0.6"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -11168,7 +11169,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tailwindcss", "npm:3.4.17"],\
             ["tailwindcss-radix", "npm:2.9.0"],\
             ["typescript", "patch:typescript@npm%3A5.8.3#~builtin<compat/typescript>::version=5.8.3&hash=a1c5e5"],\
-            ["webpack", "virtual:71f11338c4bb9ff82c386b758202cddf9d30d39739ee12ae56f8f0128e865eaad3fbc0e98d996d2aa4cc080dcbd5d1201a181be8dc7646aa406ec878dfe52c25#npm:5.100.2"]\
+            ["webpack", "virtual:71f11338c4bb9ff82c386b758202cddf9d30d39739ee12ae56f8f0128e865eaad3fbc0e98d996d2aa4cc080dcbd5d1201a181be8dc7646aa406ec878dfe52c25#npm:5.100.2"],\
+            ["zustand", "virtual:71f11338c4bb9ff82c386b758202cddf9d30d39739ee12ae56f8f0128e865eaad3fbc0e98d996d2aa4cc080dcbd5d1201a181be8dc7646aa406ec878dfe52c25#npm:5.0.6"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -14305,6 +14307,39 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/yaml-npm-2.8.0-01747dd315-66f103ca5a.zip/node_modules/yaml/",\
           "packageDependencies": [\
             ["yaml", "npm:2.8.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["zustand", [\
+        ["npm:5.0.6", {\
+          "packageLocation": "./.yarn/cache/zustand-npm-5.0.6-2136dfd705-1808cd7d49.zip/node_modules/zustand/",\
+          "packageDependencies": [\
+            ["zustand", "npm:5.0.6"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:71f11338c4bb9ff82c386b758202cddf9d30d39739ee12ae56f8f0128e865eaad3fbc0e98d996d2aa4cc080dcbd5d1201a181be8dc7646aa406ec878dfe52c25#npm:5.0.6", {\
+          "packageLocation": "./.yarn/__virtual__/zustand-virtual-a095ba1f00/0/cache/zustand-npm-5.0.6-2136dfd705-1808cd7d49.zip/node_modules/zustand/",\
+          "packageDependencies": [\
+            ["zustand", "virtual:71f11338c4bb9ff82c386b758202cddf9d30d39739ee12ae56f8f0128e865eaad3fbc0e98d996d2aa4cc080dcbd5d1201a181be8dc7646aa406ec878dfe52c25#npm:5.0.6"],\
+            ["@types/immer", null],\
+            ["@types/react", [\
+              "types-react",\
+              "npm:19.0.0-rc.1"\
+            ]],\
+            ["@types/use-sync-external-store", null],\
+            ["immer", null],\
+            ["react", "npm:19.1.0"],\
+            ["use-sync-external-store", null]\
+          ],\
+          "packagePeers": [\
+            "@types/immer",\
+            "@types/react",\
+            "@types/use-sync-external-store",\
+            "immer",\
+            "react",\
+            "use-sync-external-store"\
           ],\
           "linkType": "HARD"\
         }]\

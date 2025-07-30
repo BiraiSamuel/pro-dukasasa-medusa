@@ -7,7 +7,6 @@ import {
   Transition,
 } from "@headlessui/react"
 import { convertToLocale } from "@lib/util/money"
-import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
 import DeleteButton from "@modules/common/components/delete-button"
 import LineItemOptions from "@modules/common/components/line-item-options"
@@ -16,24 +15,22 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import Thumbnail from "@modules/products/components/thumbnail"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
-import { useCart } from "@lib/context/CartProvider"
+import { useCartStore } from "@store/cartStore"
+import toast from "react-hot-toast";
 
 const CartDropdown = () => {
-  const { cart, refreshCart } = useCart()
-  console.log("✅  Cart Data for dropdown--", cart)
-  const [activeTimer, setActiveTimer] = useState<NodeJS.Timeout | undefined>(
-    undefined
-  )
+  const pathname = usePathname()
+
+  const quantity = useCartStore((state) => state.quantity)
+  const fetchCart = useCartStore((state) => state.fetchCart)
+
+  const [cartData, setCartData] = useState<any>(null)
+  const itemRef = useRef<number>(quantity || 0)
+  const [activeTimer, setActiveTimer] = useState<NodeJS.Timeout>()
   const [cartDropdownOpen, setCartDropdownOpen] = useState(false)
 
   const open = () => setCartDropdownOpen(true)
   const close = () => setCartDropdownOpen(false)
-
-  const totalItems =
-    cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0
-
-  const subtotal = cart?.subtotal ?? 0
-  const itemRef = useRef<number>(totalItems || 0)
 
   const timedOpen = () => {
     open()
@@ -46,19 +43,64 @@ const CartDropdown = () => {
     open()
   }
 
+  const loadCart = async () => {
+    try {
+      const res = await fetch("/api/proxy/cart", { cache: "no-store" })
+      const json = await res.json()
+      setCartData(json.cart?.data || null)
+      console.log("cart data", json.cart.data.items)
+
+      const items = json.cart?.data?.items || []
+      //console.log(items);
+      const total = items.reduce((sum: number, item: any) => sum + item.quantity, 0)
+      useCartStore.getState().setQuantity(total)
+    } catch (error) {
+      setCartData(null)
+      useCartStore.getState().setQuantity(0)
+    }
+  }
+
+  useEffect(() => {
+    loadCart()
+  }, [])
+
   useEffect(() => {
     return () => {
       if (activeTimer) clearTimeout(activeTimer)
     }
   }, [activeTimer])
 
-  const pathname = usePathname()
-
   useEffect(() => {
-    if (itemRef.current !== totalItems && !pathname.includes("/cart")) {
+    if (itemRef.current !== quantity && !pathname.includes("/cart")) {
       timedOpen()
+      itemRef.current = quantity
     }
-  }, [totalItems, pathname])
+  }, [quantity, pathname])
+
+  const handleDelete = async (id: string) => {
+    //console.log(id);
+    try {
+      const res = await fetch("/api/proxy/cart", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item_id: id }),
+      });
+      const result = await res.json();
+      console.log(result);
+      if (!result.success) throw new Error();
+      toast.success("Item removed");
+      await useCartStore.getState().fetchCart(); // ✅ refresh UI
+      fetchCart();
+    } catch {
+      toast.error("Failed to remove item");
+    }
+
+    await loadCart()
+  }
+
+  const items = cartData?.items || []
+  const subtotal = cartData?.base_grand_total || 0
+  const currencyCode = cartData?.base_currency_code || "kes"
 
   return (
     <div
@@ -72,7 +114,7 @@ const CartDropdown = () => {
             className="hover:text-ui-fg-base"
             href="/cart"
             data-testid="nav-cart-link"
-          >{`Cart (${totalItems})`}</LocalizedClientLink>
+          >{`Cart (${quantity})`}</LocalizedClientLink>
         </PopoverButton>
 
         <Transition
@@ -94,10 +136,10 @@ const CartDropdown = () => {
               <h3 className="text-large-semi">Cart</h3>
             </div>
 
-            {cart && cart.items?.length ? (
+            {items.length ? (
               <>
                 <div className="overflow-y-scroll max-h-[402px] px-4 grid grid-cols-1 gap-y-8 no-scrollbar p-px">
-                  {cart.items
+                  {items
                     .sort((a, b) =>
                       (a.created_at ?? "") > (b.created_at ?? "") ? -1 : 1
                     )
@@ -112,7 +154,7 @@ const CartDropdown = () => {
                           className="w-24"
                         >
                           <Thumbnail
-                            thumbnail={item.thumbnail}
+                            thumbnail={item.product.base_image.small_image_url}
                             images={item.variant?.product?.images}
                             size="square"
                           />
@@ -127,13 +169,12 @@ const CartDropdown = () => {
                                     href={`/products/${item.product_handle}`}
                                     data-testid="product-link"
                                   >
-                                    {item.title}
+                                    {item.product.name}
                                   </LocalizedClientLink>
                                 </h3>
                                 <LineItemOptions
-                                  variant={item.variant}
+                                  variant={item.product.type}
                                   data-testid="cart-item-variant"
-                                  data-value={item.variant}
                                 />
                                 <span
                                   data-testid="cart-item-quantity"
@@ -146,7 +187,7 @@ const CartDropdown = () => {
                                 <LineItemPrice
                                   item={item}
                                   style="tight"
-                                  currencyCode={cart.currency_code}
+                                  currencyCode={currencyCode}
                                 />
                               </div>
                             </div>
@@ -156,6 +197,7 @@ const CartDropdown = () => {
                             id={item.id}
                             className="mt-1"
                             data-testid="cart-item-remove-button"
+                            onClick={() => handleDelete(item.id)}
                           >
                             Remove
                           </DeleteButton>
@@ -167,7 +209,7 @@ const CartDropdown = () => {
                 <div className="p-4 flex flex-col gap-y-4 text-small-regular">
                   <div className="flex items-center justify-between">
                     <span className="text-ui-fg-base font-semibold">
-                      Subtotal <span className="font-normal">(excl. taxes)</span>
+                      Subtotal <span className="font-normal">(inc. taxes)</span>
                     </span>
                     <span
                       className="text-large-semi"
@@ -176,7 +218,7 @@ const CartDropdown = () => {
                     >
                       {convertToLocale({
                         amount: subtotal,
-                        currency_code: cart.currency_code,
+                        currency_code: currencyCode,
                       })}
                     </span>
                   </div>
