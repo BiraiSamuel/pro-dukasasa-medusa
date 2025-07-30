@@ -39,6 +39,20 @@ const nextConfig = {
       },
     ],
   },
+  output: 'standalone',
+  headers() {
+    return [
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store',
+          },
+        ],
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

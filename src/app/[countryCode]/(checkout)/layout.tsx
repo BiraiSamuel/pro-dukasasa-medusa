@@ -241,6 +241,28 @@ export default function CheckoutLayout() {
           <p className="text-center text-gray-500">Your cart is empty.</p>
         )}
       </div>
+      <div className="mt-2">
+                <a
+                  href="https://intasend.com/security"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="https://intasend-prod-static.s3.amazonaws.com/img/trust-badges/intasend-trust-badge-with-mpesa-hr-dark.png"
+                    width="300"
+                    alt="IntaSend Secure Payments"
+                    className="mx-auto"
+                  />
+                </a>
+                <a
+                  href="https://intasend.com/security"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-xs mt-2 text-gray-500 hover:underline text-center"
+                >
+                  Secured by IntaSend Payments
+                </a>
+      </div>
 
       <div className="py-6 w-full flex justify-center border-t mt-6 bg-gray-50">
         <MedusaCTA />

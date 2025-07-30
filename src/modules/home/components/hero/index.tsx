@@ -21,8 +21,6 @@ const Hero = () => {
         </span>
         <a
           href="/ke/store"
-          target="_blank"
-          rel="noopener noreferrer"
         >
           <Button variant="secondary">
             Shop Now

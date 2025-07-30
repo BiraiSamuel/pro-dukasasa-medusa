@@ -135,7 +135,7 @@ export default async function Footer() {
               <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
                 <li>
                   <a
-                    href="https://github.com/biraisamuel16"
+                    href="https://github.com/BiraiSamuel"
                     target="_blank"
                     rel="noreferrer"
                     className="hover:text-ui-fg-base"
@@ -155,7 +155,7 @@ export default async function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://github.com/biraisamuel16/medusa-pro"
+                    href="https://github.com/biraisamuel/pro-dukasasa-medusa"
                     target="_blank"
                     rel="noreferrer"
                     className="hover:text-ui-fg-base"
@@ -169,7 +169,7 @@ export default async function Footer() {
         </div>
         <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
           <Text className="txt-compact-small">
-            © {new Date().getFullYear()} Kenya East Klad & Dukasasa. All rights reserved.
+            © {new Date().getFullYear()} Dukasasa. All rights reserved.
           </Text>
           <MedusaCTA />
         </div>
