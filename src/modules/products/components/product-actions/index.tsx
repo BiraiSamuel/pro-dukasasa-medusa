@@ -13,6 +13,7 @@ import Divider from "@modules/common/components/divider"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import Image from "next/image"
+import { useCartStore } from "@store/cartStore";
 
 const optionsAsKeymap = (
   variantOptions: HttpTypes.StoreProductVariant["options"]
@@ -144,6 +145,7 @@ export default function ProductActions({ product }: ProductActionsProps) {
         console.error("Cart error:", response)
       } else {
         toast.success(`${product.title} added to cart`)
+	await useCartStore.getState().fetchCart(); // ✅ refresh UI
         if (redirectToCheckout) {
           router.push("/ke/checkout")
         }
